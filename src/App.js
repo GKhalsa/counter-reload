@@ -9,9 +9,7 @@ class App extends Component {
     state = setInitialState();
 
     counterChange = (val) => {
-        this.setState((prevState) => ({currentVal: prevState.currentVal + val}),
-            this.handleReset
-        )
+        this.setState({currentVal: val}, this.handleReset)
     };
 
     handleReset = () => {
@@ -22,7 +20,6 @@ class App extends Component {
     };
 
     render() {
-
         const {currentVal, targetVal} = this.state
 
         return (
@@ -31,8 +28,8 @@ class App extends Component {
                     {currentVal} of {targetVal}
                 </div>
                 <div>
-                    <button onClick={() => this.counterChange(-1)}>dec</button>
-                    <button onClick={() => this.counterChange(+1)}>inc</button>
+                    <button onClick={() => this.counterChange(currentVal - 1)}>dec</button>
+                    <button onClick={() => this.counterChange(currentVal + 1)}>inc</button>
                 </div>
             </div>
         );
