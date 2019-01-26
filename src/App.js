@@ -48,18 +48,13 @@ class App extends Component {
     }
 }
 
-
 const Loading = () => <div>...loading</div>
 
-const AppQuery = () => {
-    return (
-
-        <Query query={GET_TARGET_VALUE}>
-            {(apolloData) => {
-                return apolloData.loading ? <Loading/> : <App {...apolloData} key={Date.now()}/>
-            }}
-        </Query>
-    )
-}
+const AppQuery = () =>
+    <Query query={GET_TARGET_VALUE}>
+        {(apolloData) => {
+            return apolloData.loading ? <Loading/> : <App {...apolloData} key={Date.now()}/>
+        }}
+    </Query>
 
 export default AppQuery
