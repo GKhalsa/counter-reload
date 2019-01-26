@@ -1,39 +1,65 @@
-import React, {Component} from "react";
-import "./App.css";
-import {getNewValue} from './helpers/randomNumGen'
+import React, {Component} from "react"
+import "./App.css"
+import {Query} from "react-apollo"
+import gql from "graphql-tag"
 
-const setInitialState = () => ({currentVal: 0, targetVal: getNewValue()})
+const GET_TARGET_VALUE = gql`
+  query { value: getNewValue @client }
+  `
 
 class App extends Component {
 
-    state = setInitialState();
+    constructor(props) {
+        super(props)
+        const {data: {value}, refetch} = props
+        this.state = {
+            targetVal: value,
+            refetch,
+            currentVal: 0,
+        }
+    }
 
     counterChange = (val) => {
         this.setState({currentVal: val}, this.handleReset)
-    };
+    }
 
     handleReset = () => {
-        const {currentVal, targetVal} = this.state
+        const {currentVal, targetVal, refetch} = this.state
         if (currentVal === targetVal) {
-            this.setState(setInitialState)
+            refetch()
         }
-    };
+    }
 
     render() {
         const {currentVal, targetVal} = this.state
-
+        const isDisabled = currentVal === targetVal
         return (
+
             <div className="App">
                 <div>
                     {currentVal} of {targetVal}
                 </div>
                 <div>
-                    <button onClick={() => this.counterChange(currentVal - 1)}>dec</button>
-                    <button onClick={() => this.counterChange(currentVal + 1)}>inc</button>
+                    <button disabled={isDisabled} onClick={() => this.counterChange(currentVal - 1)}>dec</button>
+                    <button disabled={isDisabled} onClick={() => this.counterChange(currentVal + 1)}>inc</button>
                 </div>
             </div>
-        );
+        )
     }
 }
 
-export default App
+
+const Loading = () => <div>...loading</div>
+
+const AppQuery = () => {
+    return (
+
+        <Query query={GET_TARGET_VALUE}>
+            {(apolloData) => {
+                return apolloData.loading ? <Loading/> : <App {...apolloData} key={Date.now()}/>
+            }}
+        </Query>
+    )
+}
+
+export default AppQuery
